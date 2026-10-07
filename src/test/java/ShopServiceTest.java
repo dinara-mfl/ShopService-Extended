@@ -61,4 +61,59 @@ class ShopServiceTest {
 
         assertTrue(actual.isEmpty());
     }
+
+    @Test
+    void updateOrder_whenValidId_expectUpdatedOrder() throws InvalidIDException {
+        ShopService shopService = new ShopService();
+        Order originalOrder = shopService.addOrder(List.of("1"));
+
+        Order actual = shopService.updateOrder(
+                originalOrder.id(),
+                OrderStatus.IN_DELIVERY
+        );
+
+        Order expected = originalOrder.withStatus(OrderStatus.IN_DELIVERY);
+
+        assertEquals(expected, actual);
+        assertEquals(
+                List.of(expected),
+                shopService.getOrdersByStatus(OrderStatus.IN_DELIVERY)
+        );
+        assertTrue(
+                shopService.getOrdersByStatus(OrderStatus.PROCESSING).isEmpty()
+        );
+    }
+
+    @Test
+    void updateOrder_whenCompleted_expectCompletedOrder() throws InvalidIDException {
+        ShopService shopService = new ShopService();
+        Order originalOrder = shopService.addOrder(List.of("1"));
+        shopService.updateOrder(originalOrder.id(), OrderStatus.IN_DELIVERY);
+
+        Order actual = shopService.updateOrder(
+                originalOrder.id(),
+                OrderStatus.COMPLETED
+        );
+
+        assertEquals(originalOrder.withStatus(OrderStatus.COMPLETED), actual);
+        assertEquals(
+                List.of(actual),
+                shopService.getOrdersByStatus(OrderStatus.COMPLETED)
+        );
+        assertTrue(
+                shopService.getOrdersByStatus(OrderStatus.IN_DELIVERY).isEmpty()
+        );
+    }
+
+    @Test
+    void updateOrder_whenInvalidId_expectInvalidIDException() {
+        ShopService shopService = new ShopService();
+
+        InvalidIDException exception = assertThrows(
+                InvalidIDException.class,
+                () -> shopService.updateOrder("unknown-id", OrderStatus.COMPLETED)
+        );
+
+        assertEquals("Ungültige ID: unknown-id", exception.getMessage());
+    }
 }

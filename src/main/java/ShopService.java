@@ -25,4 +25,17 @@ public class ShopService {
                 .filter(order -> order.status() == status)
                 .toList();
     }
+
+    public Order updateOrder(String orderId, OrderStatus status) throws InvalidIDException {
+        Order order = orderRepo.getOrderById(orderId);
+
+        if (order == null) {
+            throw new InvalidIDException(orderId);
+        }
+
+        Order updatedOrder = order.withStatus(status);
+
+        orderRepo.removeOrder(orderId);
+        return orderRepo.addOrder(updatedOrder);
+    }
 }
