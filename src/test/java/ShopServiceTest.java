@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ShopServiceTest {
 
     @Test
-    void addOrderTest() {
+    void addOrderTest() throws InvalidIDException {
         //GIVEN
         ShopService shopService = new ShopService();
         List<String> productsIds = List.of("1");
@@ -22,20 +22,17 @@ class ShopServiceTest {
     }
 
     @Test
-    void addOrderTest_whenInvalidProductId_expectNull() {
+    void addOrderTest_whenInvalidProductId_expectNull() throws InvalidIDException {
         //GIVEN
         ShopService shopService = new ShopService();
         List<String> productsIds = List.of("1", "2");
 
-        //WHEN
-        Order actual = shopService.addOrder(productsIds);
-
-        //THEN
-        assertNull(actual);
+        // WHEN & THEN
+        assertThrows(InvalidIDException.class, () -> shopService.addOrder(productsIds));
     }
 
     @Test
-    void getOrdersByStatus() {
+    void getOrdersByStatus() throws InvalidIDException {
         ShopService shopService = new ShopService();
         Order firstOrder = shopService.addOrder(List.of());
         Order secondOrder = shopService.addOrder(List.of());
@@ -47,7 +44,7 @@ class ShopServiceTest {
     }
 
     @Test
-    void getOrdersByStatus_ReturnsEmptyList_WhenNoOrdersMatch() {
+    void getOrdersByStatus_ReturnsEmptyList_WhenNoOrdersMatch() throws InvalidIDException {
         ShopService shopService = new ShopService();
         shopService.addOrder(List.of());
 
