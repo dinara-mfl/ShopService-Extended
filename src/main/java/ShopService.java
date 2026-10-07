@@ -55,4 +55,8 @@ public class ShopService {
                         BinaryOperator.minBy(Comparator.comparing(Order::orderedAt))
                 ));
     }
+
+    public void printOrders() {
+        orderRepo.getOrders().forEach(System.out::println);
+    }
 }
