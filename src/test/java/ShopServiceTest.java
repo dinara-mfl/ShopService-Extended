@@ -1,10 +1,13 @@
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ShopServiceTest {
+
+    Instant orderedAt = Instant.parse("2026-10-07T10:00:00Z");
 
     @Test
     void addOrderTest() throws InvalidIDException {
@@ -16,7 +19,7 @@ class ShopServiceTest {
         Order actual = shopService.addOrder(productsIds);
 
         //THEN
-        Order expected = new Order("-1", List.of(new Product("1", "Apfel")), OrderStatus.PROCESSING);
+        Order expected = new Order("-1", List.of(new Product("1", "Apfel")), OrderStatus.PROCESSING, orderedAt);
         assertEquals(expected.products(), actual.products());
         assertNotNull(expected.id());
     }
