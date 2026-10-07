@@ -12,7 +12,7 @@ class ShopServiceTest {
     @Test
     void addOrderTest() throws InvalidIDException {
         //GIVEN
-        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo());
+        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo(), new IdService());
         List<String> productsIds = List.of("1");
 
         //WHEN
@@ -27,7 +27,7 @@ class ShopServiceTest {
     @Test
     void addOrderTest_whenInvalidProductId_expectNull() throws InvalidIDException {
         //GIVEN
-        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo());
+        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo(), new IdService());
         List<String> productsIds = List.of("1", "2");
 
         // WHEN & THEN
@@ -36,7 +36,7 @@ class ShopServiceTest {
 
     @Test
     void getOrdersByStatus() throws InvalidIDException {
-        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo());
+        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo(), new IdService());
         Order firstOrder = shopService.addOrder(List.of());
         Order secondOrder = shopService.addOrder(List.of());
 
@@ -48,7 +48,7 @@ class ShopServiceTest {
 
     @Test
     void getOrdersByStatus_ReturnsEmptyList_WhenNoOrdersMatch() throws InvalidIDException {
-        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo());
+        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo(), new IdService());
         shopService.addOrder(List.of());
 
         List<Order> actual = shopService.getOrdersByStatus(OrderStatus.COMPLETED);
@@ -58,7 +58,7 @@ class ShopServiceTest {
 
     @Test
     void getOrdersByStatus_ReturnsEmptyList_WhenRepoIsEmpty() {
-        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo());
+        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo(), new IdService());
 
         List<Order> actual = shopService.getOrdersByStatus(OrderStatus.PROCESSING);
 
@@ -67,7 +67,7 @@ class ShopServiceTest {
 
     @Test
     void updateOrder_whenValidId_expectUpdatedOrder() throws InvalidIDException {
-        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo());
+        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo(), new IdService());
         Order originalOrder = shopService.addOrder(List.of("1"));
 
         Order actual = shopService.updateOrder(
@@ -89,7 +89,7 @@ class ShopServiceTest {
 
     @Test
     void updateOrder_whenCompleted_expectCompletedOrder() throws InvalidIDException {
-        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo());
+        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo(), new IdService());
         Order originalOrder = shopService.addOrder(List.of("1"));
         shopService.updateOrder(originalOrder.id(), OrderStatus.IN_DELIVERY);
 
@@ -110,7 +110,7 @@ class ShopServiceTest {
 
     @Test
     void updateOrder_whenInvalidId_expectInvalidIDException() {
-        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo());
+        ShopService shopService = new ShopService(new ProductRepo(), new OrderMapRepo(), new IdService());
 
         InvalidIDException exception = assertThrows(
                 InvalidIDException.class,

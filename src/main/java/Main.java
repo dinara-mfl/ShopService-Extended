@@ -5,8 +5,9 @@ public class Main {
     public static void main(String[] args) throws InvalidIDException {
         ProductRepo productRepo = new ProductRepo();
         OrderRepo orderRepo = new OrderMapRepo();
+        IdService idService = new IdService();
 
-        ShopService shopService = new ShopService(productRepo, orderRepo);
+        ShopService shopService = new ShopService(productRepo, orderRepo, idService);
 
         productRepo.addProduct(new Product("2", "Banane"));
         productRepo.addProduct(new Product("3", "Orange"));
