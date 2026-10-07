@@ -2,7 +2,11 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class ShopService {
@@ -41,5 +45,14 @@ public class ShopService {
 
         orderRepo.removeOrder(orderId);
         return orderRepo.addOrder(updatedOrder);
+    }
+
+    public Map<OrderStatus, Order> getOldestOrderPerStatus() {
+        return orderRepo.getOrders().stream()
+                .collect(Collectors.toMap(
+                        Order::status,
+                        order -> order,
+                        BinaryOperator.minBy(Comparator.comparing(Order::orderedAt))
+                ));
     }
 }

@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -118,5 +119,41 @@ class ShopServiceTest {
         );
 
         assertEquals("Ungültige ID: unknown-id", exception.getMessage());
+    }
+
+    @Test
+    void getOldestOrderPerStatus() {
+        OrderRepo repo = new OrderMapRepo();
+        ShopService service = new ShopService(
+                new ProductRepo(), repo, new IdService()
+        );
+
+        Order older = new Order("1", List.of(), OrderStatus.PROCESSING,
+                Instant.parse("2026-10-01T10:00:00Z"));
+        Order newer = new Order("2", List.of(), OrderStatus.PROCESSING,
+                Instant.parse("2026-10-02T10:00:00Z"));
+        Order completed = new Order("3", List.of(), OrderStatus.COMPLETED,
+                Instant.parse("2026-10-03T10:00:00Z"));
+
+        repo.addOrder(newer);
+        repo.addOrder(older);
+        repo.addOrder(completed);
+
+        assertEquals(
+                Map.of(
+                        OrderStatus.PROCESSING, older,
+                        OrderStatus.COMPLETED, completed
+                ),
+                service.getOldestOrderPerStatus()
+        );
+    }
+
+    @Test
+    void getOldestOrderPerStatus_whenEmpty() {
+        ShopService service = new ShopService(
+                new ProductRepo(), new OrderMapRepo(), new IdService()
+        );
+
+        assertTrue(service.getOldestOrderPerStatus().isEmpty());
     }
 }
